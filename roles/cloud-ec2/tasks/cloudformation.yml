@@ -13,6 +13,9 @@
       ImageIdParameter: "{{ ami_image }}"
       WireGuardPort: "{{ wireguard_port }}"
       UseThisElasticIP: "{{ existing_eip }}"
+      EbsEncrypted: "{{ encrypted }}"
+      UserData: "{{ lookup('template', 'files/cloud-init/base.yml') | b64encode }}"
+      SshPort: "{{ ssh_port }}"
     tags:
       Environment: Algo
   register: stack

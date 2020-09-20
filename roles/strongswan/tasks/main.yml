@@ -2,7 +2,7 @@
 - include_tasks: ubuntu.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Ensure that the strongswan user exist
+- name: Ensure that the strongswan user exists
   user:
     name: strongswan
     group: nogroup
@@ -24,8 +24,18 @@
 
 - name: strongSwan started
   service:
-    name: strongswan
+    name: "{{ strongswan_service }}"
     state: started
     enabled: true
 
 - meta: flush_handlers
+
+- name: Delete the PKI directory
+  file:
+    path: "{{ ipsec_pki_path }}"
+    state: absent
+  become: false
+  delegate_to: localhost
+  when:
+    - not algo_store_pki
+    - not pki_in_tmpfs

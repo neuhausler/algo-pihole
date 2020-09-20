@@ -9,6 +9,10 @@
         update_cache: true
         install_recommends: true
         upgrade: dist
+      register: result
+      until: result is succeeded
+      retries: 30
+      delay: 10
 
     - name: Check if reboot is required
       shell: >
@@ -107,6 +111,10 @@
       - "linux-headers-{{ ansible_kernel }}"
     state: present
   when: install_headers
+
+- name: Configure the alternative ingress ip
+  include_tasks: aip/main.yml
+  when: alternative_ingress_ip
 
 - include_tasks: iptables.yml
   tags: iptables
